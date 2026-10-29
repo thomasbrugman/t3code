@@ -1,0 +1,4 @@
+{
+  "name": "T3 Code",
+  "install": "set -euo pipefail\nif ! command -v vp >/dev/null 2>&1; then\n  curl -fsSL https://vite.plus | CI=1 VP_NODE_MANAGER=yes bash\nfi\nif ! command -v vp >/dev/null 2>&1; then\n  # shellcheck disable=SC1091\n  . \"$HOME/.config/vite-plus/env\"\nfi\nvp i --frozen-lockfile -- --yes\nif [ -f apps/web/node_modules/playwright/cli.js ]; then\n  node apps/web/node_modules/playwright/cli.js install --only-shell chromium\nfi\nif [ -f apps/server/node_modules/playwright-core/cli.js ]; then\n  node apps/server/node_modules/playwright-core/cli.js install --only-shell chromium\nfi\nvp run --filter @t3tools/desktop ensure:electron\nif command -v rustup >/dev/null 2>&1; then\n  rustup toolchain install stable --profile minimal --component rustfmt\n  rustup default stable\nfi\n"
+}

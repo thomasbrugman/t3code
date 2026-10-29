@@ -1,0 +1,58 @@
+---
+description: Fork workflow, test commands, and upstream PR etiquette for pingdotgg/t3code
+alwaysApply: true
+---
+
+# Contributing from this fork
+
+This checkout is `thomasbrugman/t3code`, a fork of `pingdotgg/t3code`. `CONTRIBUTING.md` and
+`AGENTS.md` are the rules. Architecture context is `.cursor/architecture.md`, which only points at
+`docs/internals/overview.md`.
+
+Keep everything under `.cursor/` on this fork. Do not include it in a pull request to
+`pingdotgg/t3code`.
+
+## Commands
+
+Use a login shell so `vp` selects the Node version in `package.json` (`engines.node`, currently
+26.12.1). pnpm is `packageManager` (currently 12.14.0).
+
+- Install: `vp i`. Unattended installs use `vp i --frozen-lockfile -- --yes`, as
+  `scripts/setup-worktree.ts` does.
+- App: `vp run dev`. Open the pairing URL it prints. Leave `VITE_HTTP_URL` and `VITE_WS_URL` unset.
+- One test: `vp test run <files>`. Narrow a large file with `-t "<name>"`.
+- Lint paths: `vp lint <files>`.
+- One package's types: `vp run --filter <package> typecheck`.
+- Checks for the files this branch changed: `vp run check:changed`.
+
+`docs/operations/development.md` is the command reference. Repo-wide `vp check`, `vp run typecheck`,
+and `vp run test` belong to CI unless someone asks for them.
+
+## Upstream pull requests
+
+Sync `main` from `https://github.com/pingdotgg/t3code.git`, branch from that `main`, and open the
+product PR against `pingdotgg/t3code`. Fork-only setup, including `.cursor/`, stays on this fork.
+
+```sh
+git remote add upstream https://github.com/pingdotgg/t3code.git # once
+git fetch upstream
+git checkout main
+git merge upstream/main
+git push origin main
+git checkout -b fix/short-name
+```
+
+From `CONTRIBUTING.md`:
+
+- Upstream is not seeking features. Focused bug fixes, reliability, performance, and maintenance
+  are the changes most likely to be reviewed. Opening a PR does not guarantee review.
+- One underlying problem per PR. Contract, server, client, test, and doc edits for that problem
+  stay together.
+- Features and intentional behavior changes need prior maintainer approval of the direction and
+  scope, and the PR links that approval. A very small obvious bug fix, or a focused option on an
+  existing capability, can use the exceptions written in that guide.
+- Explain how the problem was established and how the change was checked. UI changes need
+  before/after screenshots uploaded to GitHub, not committed.
+- Conventional commit titles, in plain language, such as `fix(web): new threads no longer spike CPU`.
+  When an agent wrote the change, end the PR body with the model and harness.
+- PRs that state a Gemini model, or Muse Wonder other than Muse Wonder Full, wrote the code are closed.
